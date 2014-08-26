@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title></title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/app.css" />
+        <script type="text/javascript" src="jquery-1.11.1.min.js"></script>  
+        <script type="text/javascript" src="jquery.mobile-1.4.3.js"></script>
+        <script type="text/javascript" src="jquery.timer.js"></script>
+        <link rel="stylesheet" type="text/css" href="jquery.mobile-1.4.3.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.theme-1.4.3.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.icons-1.4.3.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.inline-png-1.4.3.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.inline-svg-1.4.3.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.external-png-1.4.3.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.structure-1.4.3.css" />
+		<meta name="format-detection" content="telephone=no">
+
+        <script type="text/javascript">
+
+            var usuario ;
+
+            var destino = { "nome": "Patricia Maria", "id": "53fa1a5331830f1533d5567c" };
+
+            var timer ;
+
+            $.mobile.changePage.defaults.allowSamePageTransition = true;
+
+            document.addEventListener("deviceready", init, false);
+
+            function init() {
+
+                getUsuario();
+           }
+
+
+            function checkMensagens() {
+
+                console.log("Timer");
+
+                $.getJSON("http://162.243.222.52:8080/api/mensagens/" + usuario.id, {
+                    format: "json"
+                })
+                .done(function (data) {
+
+                    console.log("Request OK");
+
+                    $.each(data, function (index, value) {
+
+                        var dataMensagem = new Date(value.data);
+
+                        $("#mensagensTrocadas").append('<div > <div style="display:inline-block; margin-top:10px; ;color:#075698; padding:4px;text-align:right;border-radius: 4px; border:solid 1px #075698">' + value.mensagem + '&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '</div></div>');
+
+                        atualizaMensagem(value._id);
+
+                    });
+
+
+
+                })
+                .fail(function (jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err);
+                });
+
+            }
+
+            $(function () {
+
+                $('#viewConversa').on('pagehide', function () {
+
+                    console.log("Page Hide");
+
+                    timer.pause();
+
+                });
+
+                $('#viewConversa').on('pageshow', function () {
+
+                    document.querySelector('#nomeUsuarioDestino').innerHTML = destino.nome;
+
+                    console.log("Page Show");
+
+                    timer = $.timer(checkMensagens, 5000, false);
+
+                    timer.play();
+
+                });
+
+                $('#conectarUsuario').click(function () {
+
+                    var tempusr = { "nome": $('#nome').val(), "telefone": $('#telefone').val() };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "http://162.243.222.52:8080/api/usuarios",
+                        data: JSON.stringify(tempusr),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+
+                            window.localStorage.setItem("Nome", tempusr.nome);
+                            window.localStorage.setItem("Telefone", tempusr.telefone);
+                            window.localStorage.setItem("Id", data.Id);
+
+                            getUsuario();
+
+                        },
+
+                        failure: function (errMsg) {
+                            fail(errMsg);
+                        }
+
+                    });
+
+
+                });
+
+
+                $('#enviarMensagem').click(function () {
+
+
+                    var tempMensagem = { "origem": usuario.id, "destino": destino.id, "tipo": 1, "mensagem": $('#mensagem').val(), "arquivo": "" };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "http://162.243.222.52:8080/api/mensagens",
+                        data: JSON.stringify(tempMensagem),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+
+                            var dataMensagem = new Date();
+
+                            $("#mensagensTrocadas").append('<div style="text-align:right;"> <div style="display:inline-block; margin-top:10px; ;color:white; background-color:#075698; padding:4px;text-align:right;border-radius: 4px; border:solid 1px #075698">' + tempMensagem.mensagem + '&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '</div></div>');
+
+                            $('#mensagem').val("");
+
+                        },
+
+                        failure: function (errMsg) {
+                            fail(errMsg);
+                        }
+
+                    });
+
+
+                });
+
+
+            });
+
+
+            function atualizaMensagem( mensagem ) {
+                
+                $.ajax({
+                    type: "PUT",
+                    url: "http://162.243.222.52:8080/api/mensagens/"+ mensagem ,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+            }
+
+            function fail(e) {
+
+                console.log("FileSystem Error");
+
+                console.dir(e);
+
+                document.querySelector("#erroDescricao").innerHTML = JSON.stringify(e);
+
+                $.mobile.changePage("#Erros", { allowSamePageTransition: true });
+            }
+
+
+      
+
+            function getUsuario() {
+
+                var nome = window.localStorage.getItem("Nome");
+
+                if (nome && nome.length > 0) {
+
+                    document.querySelector("#status1").innerHTML = "tem nome";
+
+                    usuario = { "nome": nome, "telefone": window.localStorage.getItem("Telefone"), "id": window.localStorage.getItem("Id") };
+
+                    $.mobile.changePage("#Conversas", { allowSamePageTransition: true });
+                }
+                else {
+
+                    document.querySelector("#status1").innerHTML = "nao tem nome";
+
+                    $.mobile.changePage("#Criar", { allowSamePageTransition: true });
+
+                }
+
+                document.querySelector("#status").innerHTML = JSON.stringify(nome);
+                document.querySelector("#status1").innerHTML = JSON.stringify(nome);
+
+            }
+
+
+        </script>
+	</head>
+	<body>
+
+        <div id="Load" data-role="page">
+    
+         
+        
+            <div data-role="content" data-position="center">
+            
+                <label >Carregando....</label> 
+                <a href="#viewConversa" data-role="button" id="A1" > Mensagem </a>
+                <div id="status1">OK</div>
+
+            </div>
+
+        </div>
+
+     
+        <div id="Criar" data-role="page">
+        
+         <div data-role="header">
+                <h1>What`s Clone</h1>
+         </div>
+
+            <div data-role="content" data-position="center">
+            
+                <label for="nome">Qual é o seu nome:</label> 
+                <input type="text" id="nome" name="nome" value="" />
+
+                <label for="telefone">Qual é o seu telefone:</label> 
+                <input type="text" id="telefone" name="telefone" value="" />
+
+                <a href="#" data-role="button" id="conectarUsuario" > Conectar </a>
+
+            </div>
+
+        </div>
+
+
+         <div id="Conversas" data-role="page">
+        
+            <div data-role="header">
+                <h1>Contatos</h1>
+            </div>
+
+            <div data-role="content" data-position="center">
+
+                <ul id="listaConversas" data-role="listview" data-inset="true" data-filter="true" >
+
+                    <li> 
+                        <a href="">
+                        
+                        Teste
+                        
+                        </a>  
+                    
+                    </li>
+                
+                </ul>
+
+                <a href="#viewConversa" data-role="button" id="btnMensagem" > Mensagem </a>
+
+                <div id="status">OK</div>
+
+            </div>
+
+
+            <div data-role="footer"  data-position="fixed">
+
+               
+                <a href="#AdicionarContato" data-icon="plus" data-role="button" id="adicionarContato" > Adicionar contato </a>
+                 
+
+            </div>
+            
+
+        </div>
+
+
+         <div id="AdicionarContato" data-role="page">
+        
+            <div data-role="header">
+                <a href="#Conversas" data-icon="arrow-l" data-role="button" id="va1"></a>
+                <h1>Novo contato</h1>
+            </div>
+
+            <div data-role="content" data-position="center">
+
+                <label for="telefone">Telefone do contato:</label> 
+                <input type="text" id="telefoneContato" name="telefone" value="" />
+
+                <a href="#" data-role="button" id="btnSalvarContato" > Salvar </a>
+
+            </div>
+
+         </div>
+
+        <div id="viewConversa" data-role="page" >
+        
+            <div data-role="header" data-theme="a" class="ui-grid-a">
+                <table> <tr> 
+                    <td><a href="#Conversas" data-role="button" data-icon="arrow-l" data-iconpos="notext">Voltar</a></td>
+                    <td><h1 id="nomeUsuarioDestino" style="text-align:left; margin-left:10px;"></h1></td> 
+                </tr></table>
+                
+            </div>
+
+            <div data-role="content" data-position="center" data-theme="c">
+
+                <div id="mensagensTrocadas" style="padding-left:4px;padding-right:4px">
+
+
+                </div>
+
+
+            </div>
+
+            <div data-role="footer" data-position="fixed" data-theme="a" style="padding-left:4px;padding-right:4px">
+    	        <table width="100%"><tr> 
+                    <td><input type="text" id="mensagem" value="" /></td>
+                    <td><a href="#" data-role="button" data-icon="arrow-r" data-iconpos="notext" id="enviarMensagem">Enviar</a></td> 
+                </tr></table>
+            </div>
+
+        </div>
+
+        
+         <div id="Erros" data-role="page">
+        
+         <div data-role="header">
+                <h1>Erros</h1>
+            </div>
+
+            <div data-role="content" data-position="center">
+            
+                <div id="erroDescricao">OK</div>
+
+            </div>
+
+        </div>
+
+        	
+	</body>
+
+</html>
+

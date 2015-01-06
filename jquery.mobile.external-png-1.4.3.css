@@ -58,6 +58,12 @@
 .ui-icon-camera:after {
 	background-image: url(images/icons-png/camera-white.png);
 }
+.ui-icon-multimidia:after {
+	background-image: url(images/icons-png/multimidia-white.png);
+}
+.ui-icon-galeria:after {
+	background-image: url(images/icons-png/galeria-white.png);
+}
 .ui-icon-carat-d:after {
 	background-image: url(images/icons-png/carat-d-white.png);
 }
@@ -226,6 +232,14 @@ html .ui-btn.ui-checkbox-on.ui-checkbox-on:after {
 .ui-alt-icon.ui-icon-camera:after,
 .ui-alt-icon .ui-icon-camera:after {
 	background-image: url(images/icons-png/camera-black.png);
+}
+.ui-alt-icon.ui-icon-multimidia:after,
+.ui-alt-icon .ui-icon-multimidia:after {
+	background-image: url(images/icons-png/multimidia-black.png);
+}
+.ui-alt-icon.ui-icon-galeria:after,
+.ui-alt-icon .ui-icon-galeria:after {
+	background-image: url(images/icons-png/galeria-black.png);
 }
 .ui-alt-icon.ui-icon-carat-d:after,
 .ui-alt-icon .ui-icon-carat-d:after {

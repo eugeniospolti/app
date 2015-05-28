@@ -1255,22 +1255,16 @@
 
                     if (nome && nome.length > 0) {
 
-                        document.querySelector("#status1").innerHTML = "tem nome";
-
                         usuario = { "nome": nome, "telefone": window.localStorage.getItem("Telefone"), "_id": window.localStorage.getItem("Id") };
 
                         $.mobile.changePage("#Conversas", { allowSamePageTransition: true });
                     }
                     else {
 
-                        document.querySelector("#status1").innerHTML = "nao tem nome";
 
                         $.mobile.changePage("#Criar", { allowSamePageTransition: true });
 
                     }
-
-//                    document.querySelector("#status").innerHTML = JSON.stringify(usuario._id);
-//                    document.querySelector("#status1").innerHTML = JSON.stringify(usuario._id);
 
                 }
                 catch (err) {
@@ -1290,8 +1284,6 @@
             <div data-role="content" data-position="center">
             
                 <label >Carregando....</label> 
-                <a href="#Conversas" data-role="button" id="A1" data-inline="true"> Conversas </a>
-                <div id="status1">OK</div>
 
             </div>
 
@@ -1339,10 +1331,6 @@
                 <ul id="listaConversas" data-role="listview" data-inset="true" data-filter="true" >
                 
                 </ul>
-
-                <a href="#viewConversa" data-role="button" id="btnMensagem" > Mensagem </a>
-
-                <div id="status">OK</div>
 
             </div>
 

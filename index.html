@@ -1,348 +1,1684 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-    <title>Functions</title>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
+	<head>
 
-        function checkLanguage() {
-            navigator.globalization.getPreferredLanguage(
-              function (language) { alert('language: ' + language.value + '\n'); },
-              function () { alert('Error getting language\n'); }
-            );
-        }
-    </script>
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title></title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <script type="text/javascript" src="jquery-1.11.1.min.js"></script>  
+        <script type="text/javascript" src="jquery.mobile-1.4.5.min.js"></script>
+        <script type="text/javascript" src="jquery.timer.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/Custom.css"/>
+        <link rel="stylesheet" type="text/css" href="css/windows_mobile.css"/>
+        <link rel="stylesheet" type="text/css" href="jquery.mobile-1.4.5.min.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.theme-1.4.5.min.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.icons-1.4.5.min.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.inline-png-1.4.5.min.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.inline-svg-1.4.5.min.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.external-png-1.4.5.min.css" />
+        <link rel="stylesheet" type="text/css" href="jquery.mobile.structure-1.4.5.min.css" />
+       
+		<meta name="format-detection" content="telephone=no">
 
-    <script type="text/javascript">
+        <script type="text/javascript">
 
-        // Popup Window
-        function btn_click() {
-            navigator.notification.alert("Button Clicked", null, "Pop Up", "");
-        }
+            var serverURL = "http://162.243.222.52/api" ;
 
-        // Vibrate
-        function vibrate() {
-            navigator.notification.vibrate(1000)
-        }
+            var usuario ;
 
-        // Connection Type
-        function Connection_Type() {
-            var networkState = navigator.network.connection.type;
-            navigator.notification.alert(networkState);
-        }
+            var destino ;
 
-        // Device Information
-        function Device_Info() {
-            var DeviceName = device.name;
-            var Platform = device.platform;
-            var UniqueID = device.uuid;
-            var Version = device.version;
-            navigator.notification.alert('Device Name : ' + DeviceName + '\n Platform : ' + Platform
-            + '\n UUID : ' + UniqueID + '\n Version : ' + Version);
-        }
+            var timer;
 
-        // Camera Capture
-        function Camera_Capture() {
-            navigator.camera.getPicture(onSuccess, onFail, { sourceType: Camera.PictureSourceType.CAMERA });
-        }
+            var mediaRec;
 
-        function onSuccess(data) {
-            var imageControl = document.getElementById('image');
-            imageControl.src = "data:image/jpeg;base64," + data;
-        }
+            var conversa = [];
 
-        function onFail(message) {
-            alert('Error taking picture');
-        }
+            var contatosEnviar = [];
 
-        // Accelerometer
-        function Dev_Ready() {
-            navigator.accelerometer.getCurrentAcceleration(onSuccess, Error);
-        }
+            var contatos = [];  // = [{ "nome": "Patricia Maria", "_id": "540b9c2a06b4de496c3facc1", "telefone": "99980726", "imagem": ""}];
 
-        function onSuccess(acceleration) {
-            alert('Acceleration X: ' + acceleration.x + '\n' +
-                    'Acceleration Y: ' + acceleration.y + '\n' +
-                    'Acceleration Z: ' + acceleration.z + '\n' +
-                    'Timestamp: ' + acceleration.timestamp + '\n');
-        }
+            var adicionouContatos = false;
 
-        function Error() {
-            alert('onError!');
-        }
+            $.mobile.changePage.defaults.allowSamePageTransition = true;
 
-        // Compass
-        function Compass() {
-            navigator.compass.getCurrentHeading(Success, Errror);
-        }
+            document.addEventListener("deviceready", init, false);
 
-        function Success(heading) {
-            alert('Heading: ' + heading.magneticHeading);
-        }
+            function init() {
 
-        function Errror(compassError) {
-            alert('Compass Error: ' + compassError.code);
-        }
+                getUsuario();
 
-        // GeoLocation
-        function Geo_Location() {
-            navigator.geolocation.getCurrentPosition(GeoSuccess, GeoError);
-        }
+                window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+            
+                window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFileSystem, fail);
 
-        function GeoSuccess(position) {
-            var element = document.getElementById('geolocation');
-            alert('Latitude: ' + position.coords.latitude + '\n' +
-                                'Longitude: ' + position.coords.longitude + '\n' +
-                                'Altitude: ' + position.coords.altitude + '\n' +
-                                'Accuracy: ' + position.coords.accuracy + '\n' +
-                                'Altitude Accuracy: ' + position.coords.altitudeAccuracy + '\n' +
-                                'Heading: ' + position.coords.heading + '\n' +
-                                'Speed: ' + position.coords.speed + '\n' +
-                                'Timestamp: ' + position.timestamp);
-        }
+            }
 
-        function GeoError(error) {
-            alert('code: ' + error.code + '\n' +
-                    'message: ' + error.message + '\n');
-        }
+            function onLocalSuccess(position) {
 
-        // Battery Status
-        window.addEventListener("batterystatus", onBatteryStatus, false);
-        function onBatteryStatus(info) {
-            // Handle the online event
-            //console.log("Level: " + info.level + " isPlugged: " + info.isPlugged);
-            alert("Level: " + info.level + "%, isPlugged: " + info.isPlugged);
-        }
-    </script>
+                var longitude = position.coords.longitude;
+                var latitude = position.coords.latitude;
 
-</head>
-<body>
+                $('#latitude').val(latitude);
+                $('#longitude').val(longitude);
 
-    <div data-role="page" id="pageone">
-        <div data-role="header">
-            <h1>Phonegap</h1>
-        </div>
-        <ul data-role="listview" data-inset="true">
-            <li><a href="#pagetwo">Show Pop Up</a></li>
-            <li><a href="#pagethree">Vibrate</a></li>
-            <li><a href="#pagefour">Connection Type</a></li>
-            <li><a href="#pagefive">Device Info</a></li>
-            <li><a href="#pagesix">Camera Capture</a></li>
-            <li><a href="#pageseven">Back Button</a></li>
-            <li><a href="#pageeight">Accelerometer</a></li>
-            <li><a href="#pagenine">Compass</a></li>
-            <li><a href="#pageten">GeoLocation</a></li>
-            <li><a href="#pagetwelve">Battery Status</a></li>
-            <li><a href="#pageeleven">collapsible Control</a></li>
-            <li><a href="#pagethirteen">Panel Control</a></li>
+            }
 
-        </ul>
+            function gotFileSystem(fileSystem) {
 
-        <div data-role="footer">
-            <h1>APIs</h1>
-        </div>
-    </div>
+                window.rootFS = fileSystem.root;
+
+                window.rootFS.getDirectory('WhatsClone', { create: true, exclusive: false }, successDir, fail);
+
+            }
+
+            function successDir(f) {
+                //fail(f);
+            } 
+
+           function abrirContatoSelecionado(o) {
+
+	            destino = contatos[o];
+
+		        $.mobile.changePage("#viewConversa", { allowSamePageTransition: true });
+  
+           }
 
 
-    <div data-role="page" id="pagetwo">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+            function baixarArquivo(o, tipo) {
 
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="btn_click()" class="ui-btn">Click Me</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+                var extensao = '.png' ;
+
+                switch (tipo) {
+
+                    case 3:
+                        extensao = '.mp4';
+                        break;
+
+                    case 4:
+                        extensao = '.3ga';
+                        break;
 
 
-    <div data-role="page" id="pagethree">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+                }
 
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="vibrate()" class="ui-btn">vibrate</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+
+                try {
+
+                    var fileTransfer = new FileTransfer();
+
+                    fileTransfer.download(
+                        serverURL + '/download/' + o.id,
+                        window.rootFS.nativeURL + '/WhatsClone/' + o.id + extensao,
+                        function (entry) {
+
+                            switch (tipo) {
+
+                                case 2:
+
+                                    $("#mensagensTrocadas").append('<div style=" width: auto;  display: inline-block;    "><a href="#" onclick="window.open(\'' + entry.nativeURL + '\', \'_blank\', \' \');"><img style="width: 50%; height: auto;"   src="' + entry.nativeURL + '" /> </a></div>');
+                                    break;
+
+                                case 3:
+                                    $("#mensagensTrocadas").append('<div style=" width: auto;  display: inline-block;    "> <video width="100%" controls> <source src="' + entry.nativeURL + '" type="audio/mp4" /></video> </div>');
+                                    break;
+
+                                case 4:
+
+                                    $("#mensagensTrocadas").append('<div style=" width: auto;  display: inline-block; "> <audio id="audio_' + o.id + '" controls><source src="" type="audio/3ga"></audio></div>');
+
+                                    var audioView = document.getElementById('audio_' + o.id);
+
+                                    audioView.src = entry.nativeURL;
+
+                                    break;
 
 
 
-    <div data-role="page" id="pagefour">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+                            }
 
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="Connection_Type()" class="ui-btn">Connection type</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+                            $(o).remove();
 
+                        },
+                        function (error) {
+                            console.log("download error source " + error.source);
+                            console.log("download error target " + error.target);
+                            console.log("upload error code" + error.code);
+                        }
+                    );
+                }
+                catch (err) {
+                    fail(err);
+                }
 
-    <div data-role="page" id="pagefive">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+                
+            }
 
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="Device_Info()" class="ui-btn">Device Info</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+            function upload(arquivoURI, fileName, mimeType) {
+
+                try {
+
+                    var ft = new FileTransfer();
 
 
-    <div data-role="page" id="pagesix">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+                var options = new FileUploadOptions();
 
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="Camera_Capture()" class="ui-btn">Camera Capture</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+                options.fileKey = "file";
+                options.fileName = fileName
+                options.mimeType = mimeType ;
+                options.chunkedMode = false;
+                options.params = { // Whatever you populate options.params with, will be available in req.body at the server-side.
+                    "description" : "Uploaded from my phone"
+                };
 
+                ft.upload(arquivoURI, serverURL + "/upload",
 
-    <div data-role="page" id="pageseven">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+                function (e) {
+                    console.log(e);
+                },
+                function (e) {
+                    fail(e);
+                }, options);
 
-        <div data-role="main" class="ui-content">
-            <a href="#" class="ui-btn" data-rel="back">Go Back</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+                 
+                }
+                catch (err) {
+                    fail(err);
+                }
 
 
-    <div data-role="page" id="pageeight">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+            }
 
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="Dev_Ready()" class="ui-btn">Accelerometer</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
-
-    <div data-role="page" id="pagenine">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
-
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="Compass()" class="ui-btn">Compass</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+            function abrirContato(o, tipo) {
 
 
-    <div data-role="page" id="pageten">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+                $.getJSON(serverURL + "/msg/" + o.id, {
+                    format: "json"
+                })
+                .done(function (data) {
 
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="Geo_Location()" class="ui-btn">Geo Location</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+                    var contatoEnviado = JSON.parse(data.mensagem);
+
+                    $('#nomeNovoContato').val(contatoEnviado.nome);
+
+                    $('#telefoneNovoContato').val(contatoEnviado.telefone);
+
+                    $.mobile.changePage("#viewNewContato", { allowSamePageTransition: true });
+
+                    $(o).remove();
+
+                });
+
+            }
+
+
+            function enviarMensagemArquivo( arquivoURI, tipo ) {
+
+                try {
+
+                        var tempMensagem = { "origem": usuario._id, "destino": destino._id, "tipo": tipo , "mensagem": "", "arquivo": "", enviada: false };
+
+                        setTimeout(function () {
+
+                            $.ajax({
+
+                                type: "POST",
+                                url: serverURL + "/mensagens",
+                                data: JSON.stringify(tempMensagem),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (data) {
+
+                                    var mimeType = 'imagem/png';
+                                    var mensagemEnvio = 'Foto enviada!';
+                                    var extensao = '.png';
+
+                                    switch (tipo) {
+                                        case 3:
+                                            mimeType = 'video/mp4';
+                                            mensagemEnvio = 'Video enviado!';
+                                            extensao = '.mp4';
+                                            break;
+                                        case 4:
+                                            mimeType = 'audio/3ga';
+                                            mensagemEnvio = 'Audio enviado!';
+                                            extensao = '.3ga';
+                                            break;
+
+                                    }
+
+                                    setTimeout(function () {
+
+                                        upload(arquivoURI, data.Id + extensao, mimeType);
+
+                                    }, 0);
+
+                                    var dataMensagem = new Date();
+
+                                    $("#mensagensTrocadas").append('<div style="text-align:right;"> <div style="display:inline-block; margin-top:10px; ;color:white; background-color:#075698; padding:4px;text-align:right;border-radius: 4px; border:solid 1px #075698"> ' + mensagemEnvio + '&nbsp;&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '</div></div>');
+
+                                    $('#mensagem').val("");
+
+                                },
+                                failure: function (errMsg) {
+                                    fail(errMsg);
+                                }
+
+                            });
+                        }, 0);
+
+                }
+                catch (err) {
+                    fail(err);
+                }
+
+            }
+
+
+            function checkMensagens() {
+
+                console.log("Timer");
+
+                $.getJSON(serverURL + "/mensagens/" + usuario._id, {
+                    format: "json"
+                })
+                 .done(function (data) {
+
+                     console.log("Request OK");
+
+                     $.each(data, function (index, value) {
+
+                         var dataMensagem = new Date(value.data);
+
+                         switch (value.tipo) {
+                             case "1":
+
+                                 $("#mensagensTrocadas").append('<div > <div style="display:inline-block; margin-top:10px; ;color:#075698; padding:4px;text-align:right;border-radius: 4px; border:solid 1px #075698">' + value.mensagem + '&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '</div></div>');
+
+                                 break;
+                             case "2":
+                                 $("#mensagensTrocadas").append('<div > Voc&ecirc; recebeu uma imagem!&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '<a href="#" onclick="baixarArquivo(this,' + value.tipo + ')"  data-icon="check" data-role="button" id="' + value._id + '" > Baixar </a></div>');
+                                 break;
+
+                             case "3":
+                                 $("#mensagensTrocadas").append('<div > Voc&Ecirc; recebeu um video!&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '<a href="#" onclick="baixarArquivo(this,' + value.tipo + ')"  data-icon="check" data-role="button" id="' + value._id + '" > Baixar </a></div>');
+                                 break;
+
+                             case "4":
+                                 $("#mensagensTrocadas").append('<div > Voc&Ecirc; recebeu um audio!&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '<a href="#" onclick="baixarArquivo(this,' + value.tipo + ')"  data-icon="check" data-role="button" id="' + value._id + '" > Baixar </a></div>');
+                                 break;
+
+                             case "7":
+                                 $("#mensagensTrocadas").append('<div > Voc&Ecirc; recebeu um contato!&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '<a href="#" onclick="abrirContato(this,' + value.tipo + ')"  data-icon="check" data-role="button" id="' + value._id + '" > Abrir </a></div>');
+                                 break;
+
+                         }
+
+                         setTimeout(function () { atualizaMensagem(value._id); }, 0);
+
+                     });
+
+
+                 })
+                 .fail(function (jqxhr, textStatus, error) {
+                     var err = textStatus + ", " + error;
+                     console.log("Request Failed: " + err);
+                 });
+
+             }
+
+
+             function adicionaContato(c) {
+
+                 if (contatos) {
+                  
+                     for (var i in contatos) {
+                         if (contatos[i]._id == c._id) {
+                             return;
+                         }
+                     }
+                 }
+
+                 contatos.push( c );
+
+                 adicionouContatos = false;
+
+                 salvaContatos();
+
+             }
+
+             function salvaContatos() {
+
+
+                window.rootFS.getDirectory('WhatsClone', { create: true, exclusive: false },
+
+                function (f) {
+
+                    f.getFile('contatos.txt', { create: true },
+
+                    function (f) {
+
+                        f.createWriter(function (writerOb) {
+
+                            writerOb.write(JSON.stringify(contatos));
+
+                        });
+
+                    }, fail);
+
+                }, fail);
+               
+             }
+
+
+            function orientationChange(e) {
+            
+                if (window.orientation == -90 || window.orientation == 90) {
+                    $.mobile.changePage("#viewConversaHorizontal", { allowSamePageTransition: true });
+                }
+                else {
+                    $.mobile.changePage("#viewConversa", { allowSamePageTransition: true });
+
+                }
+            
+            }
+
+            
+
+            var captureVideoSuccess = function (mediaFiles) {
+                var i, path, len;
+
+                var videoView = document.getElementById('enviarVideo');
+                
+                videoView.src = mediaFiles[0].fullPath;
+
+            };
+
+            var captureVideoError = function (error) {
+                navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
+            };
+
+
+            function onErroGaleria(erro) {
+
+                if (erro.indexOf("cancelled") > -1) {
+                    $.mobile.changePage("#viewConversa", { allowSamePageTransition: true });
+                }
+                else {
+                    fail(erro);
+                }
+
+            }
+
+            function getFiles(source) {
+                // Retrieve image file location from specified source
+                navigator.camera.getPicture(onFileURISuccess, onErroGaleria , { quality: 50,
+                    destinationType: navigator.camera.DestinationType.FILE_URI,
+                    sourceType: source,
+                    mediaType: 2  
+                });
+            }
+
+
+            function onFileURISuccess(imageURI) {
+
+
+                var videoView = document.getElementById('enviarVideoGaleria');
+                var largeImage = document.getElementById('imageGaleria');
+
+                if (imageURI.indexOf("video") > -1) {
+
+                    largeImage.src = "";
+
+                    largeImage.style.display = 'none';
+
+                    videoView.style.display = 'block';
+
+                    videoView.src = imageURI ;
+
+                }
+                else {
+
+                    videoView.style.display = 'none';
+
+                    videoView.src = "" ;
+
+                    largeImage.style.display = 'block';
+
+                    largeImage.src = imageURI;
+                }
+            }
+
+
+            function onSuccessContatos(contacts) {
+                var li = '';
+
+                $.each(contacts, function (key, value) {
+                    if (value.name) {
+                        $.each(value.name, function (key, value) {
+                            if (key == 'formatted') {
+                                name = value;
+                            }
+                        });
+                    }
+                    if (value.phoneNumbers) {
+                        $.each(value.phoneNumbers, function (key, value) {
+                            phone = value.value;
+                        });
+                    }
+
+                    li += '<li data-icon="false" ><input type="checkbox" name="' + value.id + '" id="' + value.id + '"/><label  for="' + value.id + '">' + name + ' ' + phone + '</label></li>';
+
+                });
+
+                $("#listContatos").append(li).listview("refresh");
+
+            };
+
+            function enviarContatos(contatosEnviar) {
+
+
+                var ct = JSON.stringify(contatosEnviar);
+                
+                var tempMensagem = { "origem": usuario._id, "destino": destino._id, "tipo": 7 , "mensagem": ct , "arquivo": "", enviada: false };
+
+                setTimeout(function () {
+
+                    $.ajax({
+                        type: "POST",
+                        url: serverURL + "/mensagens",
+                        data: JSON.stringify(tempMensagem),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+
+                            var dataMensagem = new Date();
+
+                            $("#mensagensTrocadas").append('<div style="text-align:right;"> <div style="display:inline-block; margin-top:10px; ;color:white; background-color:#075698; padding:4px;text-align:right;border-radius: 4px; border:solid 1px #075698"> Contato enviado! &nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '</div></div>');
+
+                        },
+                        failure: function (errMsg) {
+                            fail(errMsg);
+                        }
+
+                    });
+                }, 0);           
+            
+            };
 
 
 
-    <div data-role="page" id="pageeleven">
-        <div data-role="header">
-            <h1>Insert Page Title Here</h1>
-        </div>
 
-        <div data-role="main" class="ui-content">
-            <div data-role="collapsible" data-theme="b" data-content-theme="b">
-                <h1>Click me - I'm collapsible!</h1>
-                <p>I'm the expanded content.</p>
+            $(function () {
+
+
+                $('#viewLocal').on('pageshow', function () {
+
+                    var options = { enableHighAccuracy: true, maximumAge: 90000, timeout: 30000 };
+
+                    navigator.geolocation.getCurrentPosition(onLocalSuccess, fail , options );
+
+                });
+
+
+                $('#btnSalvarNovoContato').click(function () {
+
+                    var nome = $('#nomeNovoContato').val();
+                    var telefone = $('#telefoneNovoContato').val();
+
+                    var novoContact = navigator.contacts.create();
+
+                    novoContact.displayName = nome;
+
+                    var phoneNumbers = [];
+                    phoneNumbers[0] = new ContactField('mobile', telefone, true);
+                    novoContact.phoneNumbers = phoneNumbers;
+
+                    novoContact.save();
+
+                });
+
+
+                $('#btnEnviarContatos').click(function () {
+
+                    $('#listContatos input:checked').each(function () {
+
+                        contatosEnviar = [];
+
+                        var options = new ContactFindOptions();
+                        options.filter = this.id;
+                        options.multiple = false;
+                        var fields = ["id"];
+                        navigator.contacts.find(fields,
+
+                                                function (contato) {
+
+                                                    if (contato) {
+
+                                                        $.each(contato, function (key, value) {
+
+                                                            var phone = "";
+
+                                                            if (value.phoneNumbers) {
+
+                                                                $.each(value.phoneNumbers, function (key, value) {
+
+                                                                    phone = value.value;
+                                                                });
+                                                            }
+
+                                                            var novoContato = { "nome": value.displayName, "telefone": phone };
+
+                                                            setTimeout(enviarContatos(novoContato), 0);
+
+                                                        });
+
+                                                    }
+
+                                                }, fail, options);
+
+                    });
+
+                });
+
+
+                $('#viewContato').on('pageshow', function () {
+
+                    $('#listContatos').empty();
+
+                    var options = new ContactFindOptions();
+                    options.filter = "";
+
+                    options.multiple = true;
+                    var fields = ["*"];  //"*" will return all contact fields
+                    navigator.contacts.find(fields, onSuccessContatos, fail, options);
+
+                });
+
+
+                $('#viewGaleria').on('pageshow', function () {
+
+                    try {
+
+                        getFiles(navigator.camera.PictureSourceType.SAVEDPHOTOALBUM);
+
+                    }
+                    catch (err) {
+                        fail(err);
+                    }
+
+                });
+
+
+
+                $('#btnCapturarVideo').click(function () {
+
+                    try {
+                        navigator.device.capture.captureVideo(captureVideoSuccess, captureVideoError, { limit: 1, duration: 60 });
+
+                    }
+                    catch (err) {
+                        fail(err);
+                    }
+
+                });
+
+                $('#btnStopAudio').click(function () {
+
+                    try {
+
+                        if (mediaRec) {
+                            mediaRec.stopRecord();
+                        }
+
+                    }
+                    catch (err) {
+                        fail(err);
+                    }
+
+                    $("#btnCapturarAudio").show();
+                    $("#btnStopAudio").hide();
+
+                });
+
+
+                $('#btnCapturarAudio').click(function () {
+
+
+                    try {
+
+                        var src = window.rootFS.nativeURL + '/WhatsClone/' + 'audio.3ag';
+                        mediaRec = new Media(src,
+                            function () {
+
+                                var audioView = document.getElementById('enviarAudio');
+
+                                audioView.src = src;
+
+
+                            },
+                                function (err) {
+                                    fail(err);
+                                }
+                         );
+
+                        // Record audio
+                        mediaRec.startRecord();
+
+
+                    }
+                    catch (err) {
+                        fail(err);
+                    }
+
+                    $("#btnCapturarAudio").hide();
+                    $("#btnStopAudio").show();
+
+                });
+
+
+                $('#viewAudio').on('pageshow', function () {
+
+                    $("#btnStopAudio").hide();
+
+                });
+
+
+
+
+
+
+
+                $('#btnEnviarLocal').click(function () {
+
+                    try {
+
+
+                        var local = { "latitude": $('#latitude').val(), "longitude": $('#longitude').val() };
+
+                        var msg = JSON.stringify(local);
+
+                        if (msg && msg.length > 0) {
+
+                            var tempMensagem = { "origem": usuario._id, "destino": destino._id, "tipo": 1, "mensagem": "Localização " + msg, "arquivo": "", enviada: false };
+
+                            setTimeout(function () {
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: serverURL + "/mensagens",
+                                    data: JSON.stringify(tempMensagem),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (data) {
+
+                                        var dataMensagem = new Date();
+
+                                        $("#mensagensTrocadas").append('<div style="text-align:right;"> <div style="display:inline-block; margin-top:10px; ;color:white; background-color:#075698; padding:4px;text-align:right;border-radius: 4px; border:solid 1px #075698"> Localização enviada! &nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '</div></div>');
+
+                                    },
+                                    failure: function (errMsg) {
+                                        fail(errMsg);
+                                    }
+
+                                });
+                            }, 0);
+
+                        }
+
+                    }
+                    catch (err) {
+                        fail(err);
+                    }
+
+                });
+
+
+                $('#btnEnviarArquivoGaleria').click(function () {
+
+                    var imagem = $('#imageGaleria').attr('src');
+
+                    if (imagem && imagem.length > 0) {
+
+                        setTimeout(enviarMensagemArquivo(imagem, 2), 0);
+
+                    }
+                    else {
+
+                        var video = $('#enviarVideoGaleria').attr('src');
+
+                        if (video && video.length > 0) {
+
+                            setTimeout(enviarMensagemArquivo(video, 3), 0);
+
+                        }
+
+                    }
+
+
+                });
+
+
+
+
+                $('#btnEnviarFoto').click(function () {
+
+                    var imagem = $('#imgFoto').attr('src');
+
+                    if (imagem && imagem.length > 0) {
+
+                        setTimeout(enviarMensagemArquivo(imagem, 2), 0);
+
+                    }
+
+                });
+
+
+                $('#btnEnviarVideo').click(function () {
+
+                    var video = $('#enviarVideo').attr('src');
+
+                    if (video && video.length > 0) {
+
+                        setTimeout(enviarMensagemArquivo(video, 3), 0);
+
+                    }
+
+                });
+
+                $('#btnEnviarAudio').click(function () {
+
+                    var audio = $('#enviarAudio').attr('src');
+
+                    if (audio && audio.length > 0) {
+
+                        setTimeout(enviarMensagemArquivo(audio, 4), 0);
+
+                    }
+
+                });
+
+
+
+                $('#btnSalvarPerfil').click(function () {
+
+                    var img = $('#imagemPerfil').attr('src').indexOf("user30") > 1 ? "" : usuario._id;
+
+                    var tempusr = { "id": usuario._id, "nome": $('#nomePerfil').val(), "telefone": $('#telefonePerfil').val(), "imagem": img };
+
+                    setTimeout(
+                     $.ajax({
+                         type: "PUT",
+                         url: serverURL + "/usuarios/" + usuario._id,
+                         data: JSON.stringify(tempusr),
+                         contentType: "application/json; charset=utf-8",
+                         dataType: "json",
+                         success: function (data) {
+                             window.localStorage.setItem("Nome", tempusr.nome);
+                             window.localStorage.setItem("Telefone", tempusr.telefone);
+
+                             usuario.nome = tempusr.nome;
+
+                             usuario.telefone = tempusr.telefone;
+
+
+
+                             setTimeout(upload($('#imagemPerfil').attr('src'), img, 'image/png'), 0);
+
+                         },
+
+                         failure: function (errMsg) {
+                             fail(errMsg);
+                         }
+
+                     }), 0);
+
+
+
+                });
+
+
+                $('#capturaFoto').click(function () {
+                    navigator.camera.getPicture(onSuccessEnviarFoto, fail, { quality: 50, destinationType: Camera.DestinationType.FILE_URI });
+                });
+
+                function onSuccessEnviarFoto(imageURI) {
+
+                    $('#imgFoto').attr('src', imageURI);
+                }
+
+                $('#capturaFotoPerfil').click(function () {
+                    navigator.camera.getPicture(onSuccessFotoPerfil, fail, { quality: 50, destinationType: Camera.DestinationType.FILE_URI });
+                });
+
+
+                function onSuccessFotoPerfil(imageURI) {
+
+                    $('#imagemPerfil').attr('src', imageURI);
+                }
+
+
+                $('#viewPerfil').on('pageshow', function () {
+
+                    $("#nomePerfil").val(usuario.nome);
+                    $("#telefonePerfil").val(usuario.telefone);
+
+                    console.log(usuario.imagem);
+
+                    if (usuario.imagem && usuario.imagem.length > 0) {
+
+                        $('#imagemPerfil').attr('src', './images/' + usuario.imagem);
+
+                    }
+
+                });
+
+                $('#Conversas').on('pageshow', function () {
+
+                    console.log("Page show Contatos");
+
+                    getContatos();
+
+
+
+
+                });
+
+
+
+                $('#viewConversa').on('pagehide', function () {
+
+                    console.log("Page Hide");
+
+                    timer.pause();
+
+                    window.removeEventListener("orientationChange", orientationChange, true);
+
+                });
+
+
+                $('#viewConversa').on('pageshow', function () {
+
+                    if (destino) {
+
+                        document.querySelector('#nomeUsuarioDestino').innerHTML = destino.nome;
+
+                        //document.querySelector('#mensagensTrocadas').innerHTML = "";
+
+                        console.log("Page Show");
+
+                        timer = $.timer(checkMensagens, 5000, false);
+
+                        timer.play();
+
+                        window.addEventListener("orientationChange", orientationChange, true);
+
+                    }
+                    else {
+                        $.mobile.changePage("#Conversas", { allowSamePageTransition: true });
+                    }
+
+                });
+
+                $('#conectarUsuario').click(function () {
+
+                    var tempusr = { "nome": $('#nome').val(), "telefone": $('#telefone').val() };
+
+                    $.ajax({
+                        type: "POST",
+                        url: serverURL + "/usuarios",
+                        data: JSON.stringify(tempusr),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+
+                            window.localStorage.setItem("Nome", tempusr.nome);
+                            window.localStorage.setItem("Telefone", tempusr.telefone);
+                            window.localStorage.setItem("Id", data._id);
+
+                            getUsuario();
+
+                        },
+
+                        failure: function (errMsg) {
+                            fail(errMsg);
+                        }
+
+                    });
+
+
+                });
+
+
+                $('#btnLimparUsuario').click(function () {
+
+                    usuario = null;
+
+                    window.localStorage.clear();
+
+                    getUsuario();
+
+
+                });
+
+                $('#btnLimparMensagem').click(function () {
+
+                    setTimeout(function () {
+
+                        $.ajax({
+                            type: "DELETE",
+                            url: serverURL + "/clearMensagem",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            failure: function (errMsg) {
+                                fail(errMsg);
+                            }
+
+                        });
+                    }, 0);
+
+                });
+
+
+
+
+                $('#btnProcurarContato').click(function () {
+
+                    setTimeout(function () {
+
+                        var tempProcura = $('#nomeContato').val();
+
+                        $.ajax({
+                            type: "GET",
+                            url: serverURL + "/usuarios/procura/" + tempProcura,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data) {
+
+                                $("#listaProcuraContatos").empty();
+
+                                var list = '';
+
+                                $.each(data, function (i, item) {
+                                    list += '<li id=' + item._id + ' ><a >';
+                                    list += item.nome;
+                                    list += ' </br> <h4 >Telefone:' + item.telefone + '</h4> </a>   </li>';
+                                });
+
+                                $("#listaProcuraContatos").append(list).listview("refresh");
+
+                                $('#listaProcuraContatos li').on('click', function () {
+
+
+                                    var id = $(this).attr("id");
+
+                                    $.ajax({
+                                        type: "GET",
+                                        url: serverURL + "/usuarios/" + id,
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: "json",
+                                        success: function (data) {
+
+                                            destino = data;
+
+                                            setTimeout(function () {
+                                                adicionaContato(data);
+                                            });
+
+                                            $.mobile.changePage("#viewConversa", { allowSamePageTransition: true });
+
+                                        }
+                                    });
+
+
+                                    console.log(id);
+
+                                });
+
+
+
+                            },
+                            failure: function (errMsg) {
+                                fail(errMsg);
+                            }
+
+                        });
+                    }, 0);
+
+                });
+
+
+
+                $('#enviarMensagemHorizontal').click(function () {
+
+                    try {
+
+                        var msg = $('#textAreaMensagem').val();
+
+                        if (msg && msg.length > 0) {
+
+
+                            var tempMensagem = { "origem": usuario._id, "destino": destino._id, "tipo": 1, "mensagem": msg, "arquivo": "", enviada: false };
+
+                            setTimeout(function () {
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: serverURL + "/mensagens",
+                                    data: JSON.stringify(tempMensagem),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (data) {
+
+                                        var dataMensagem = new Date();
+
+                                        $("#mensagensTrocadas").append('<div style="text-align:right;"> <div style="display:inline-block; margin-top:10px; ;color:white; background-color:#075698; padding:4px;text-align:right;border-radius: 4px; border:solid 1px #075698">' + tempMensagem.mensagem + '&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '</div></div>');
+
+                                        $('#mensagem').val("");
+                                    },
+                                    failure: function (errMsg) {
+                                        fail(errMsg);
+                                    }
+
+                                });
+                            }, 0);
+
+
+
+                        }
+
+                    }
+                    catch (err) {
+                        fail(err);
+                    }
+
+                });
+
+                $('#enviarMensagem').click(function () {
+
+                    try {
+
+                        var msg = $('#mensagem').val();
+
+                        if (msg && msg.length > 0) {
+
+
+                            var tempMensagem = { "origem": usuario._id, "destino": destino._id, "tipo": 1, "mensagem": msg, "arquivo": "", enviada: false };
+
+                            setTimeout(function () {
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: serverURL + "/mensagens",
+                                    data: JSON.stringify(tempMensagem),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (data) {
+
+                                        var dataMensagem = new Date();
+
+                                        $("#mensagensTrocadas").append('<div style="text-align:right;"> <div style="display:inline-block; margin-top:10px; ;color:white; background-color:#075698; padding:4px;text-align:right;border-radius: 4px; border:solid 1px #075698">' + tempMensagem.mensagem + '&nbsp;-&nbsp;' + dataMensagem.getHours() + ':' + ("0" + dataMensagem.getMinutes()).slice(-2) + '</div></div>');
+
+                                        $('#mensagem').val("");
+                                    },
+                                    failure: function (errMsg) {
+                                        fail(errMsg);
+                                    }
+
+                                });
+                            }, 0);
+
+
+
+                        }
+
+                    }
+                    catch (err) {
+                        fail(err);
+                    }
+
+                });
+
+
+            });
+
+
+            function atualizaMensagem(mensagem) {
+
+                try {
+
+                    $.ajax({
+                        type: "PUT",
+                        url: serverURL + "/mensagens/" + mensagem,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json"
+                    });
+
+                }
+                catch (err) {
+                    fail(err);
+                }
+            }
+
+            function fail(e) {
+
+                console.log("FileSystem Error");
+
+                console.dir(e);
+
+                document.querySelector("#erroDescricao").innerHTML = JSON.stringify(e);
+
+                $.mobile.changePage("#Erros", { allowSamePageTransition: true });
+            }
+
+            function getContatos() {
+
+                window.rootFS.getDirectory('WhatsClone', { create: true, exclusive: false },
+
+                function (f) {
+
+                    f.getFile('contatos.txt', { create: true },
+
+                    function (file) {
+
+                        file.file(function (e) {
+
+                            var reader = new FileReader();
+
+                            reader.onloadend = function (evt) {
+
+                                var conteudo = evt.target._result;
+
+                                if (conteudo.length > 0) {
+
+                                    contatos = JSON.parse(conteudo);
+
+                                    if (contatos) {
+
+                                        var list = '';
+
+                                        $("#listaConversas").empty();
+
+                                        $.each(contatos, function (i, item) {
+                                            list += '<li ><a href="" onclick="abrirContatoSelecionado(' + i + ')"> ';
+                                            list += item.nome;
+                                            list += '</a></li>';
+                                        });
+
+                                        $("#listaConversas").append(list).listview("refresh");
+
+                                        adicionouContatos = true;
+                                       
+
+                                    }
+                                    
+                                }
+
+                            };
+
+                            reader.readAsText(e);
+
+                        });
+
+
+                        //                        reader = new FileReader();
+
+                        //                        reader.onloadend = function (evt) {
+
+                        //                            var conteudo = evt.target.result;
+
+                        //                            if (conteudo.length > 0) {
+
+                        //                                contatos = JSON.parser(conteudo);
+                        //                            }
+
+                        //                        };
+
+                        //                        reader.readAsText(file);
+
+                    }, fail);
+
+                }, fail);
+
+                return [];
+                
+            }
+
+            function getUsuario() {
+
+                try {
+
+                    var nome = window.localStorage.getItem("Nome");
+
+                    if (nome && nome.length > 0) {
+
+                        usuario = { "nome": nome, "telefone": window.localStorage.getItem("Telefone"), "_id": window.localStorage.getItem("Id") };
+
+                        $.mobile.changePage("#Conversas", { allowSamePageTransition: true });
+                    }
+                    else {
+
+
+                        $.mobile.changePage("#Criar", { allowSamePageTransition: true });
+
+                    }
+
+                }
+                catch (err) {
+                    fail(err);
+                }
+            }
+
+        </script>
+
+	</head>
+
+	<body>
+
+
+        <div id="Load" data-role="page">
+        
+            <div data-role="content" data-position="center">
+            
+                <label >Carregando....</label> 
+
             </div>
+
         </div>
 
-        <div data-role="footer">
-            <h1>Insert Footer Text Here</h1>
-        </div>
-    </div>
+        <div id="Criar" data-role="page">
+        
+         <div data-role="header">
+                <h1>What`s Clone</h1>
+         </div>
 
+            <div data-role="content" data-position="center">
+            
+                <label for="nome">Seu nome:</label> 
+                <input type="text" id="nome" name="nome" value="" />
 
-    <div data-role="page" id="pagetwelve">
-        <div data-role="header">
-            <h1>Welcome To My Homepage</h1>
-        </div>
+                <label for="telefone">Seu telefone:</label> 
+                <input type="text" id="telefone" name="telefone" value="" />
 
-        <div data-role="main" class="ui-content">
-            <a href="#" onclick="onBatteryStatus()" class="ui-btn">Battery Status</a>
-            <a href="#pageone">Go back to Home page</a>
-        </div>
-        <div data-role="footer">
-            <h1>Footer Text</h1>
-        </div>
-    </div>
+                <a href="#" data-role="button" id="conectarUsuario" > Conectar </a>
 
-    <div data-role="page" id="pagethirteen">
-        <div data-role="panel" id="myPanel" data-theme="b">
-            <h2>Panel Header</h2>
-            <p>I am a themed panel!</p>
-            <p>You can close me by clicking outside of me, pressing the Esc key or by swiping.</p>
+            </div>
+
         </div>
 
-        <div data-role="header">
-            <h1>Page Header</h1>
+        <div data-role="page" data-display="push" data-theme="b" id="nav-panel">
+                    <ul data-role="listview">
+                        
+                        <li><a href="#viewPerfil">Meu perfil</a></li>
+                        <li><a href="#Configuracoes">Configura&ccedil;&otilde;es</a></li>
+                    </ul>
+                </div>
+
+         <div id="Conversas" data-role="page">
+        
+            <div data-role="header">
+                <h1>Contatos</h1>
+                <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+            </div>
+
+                
+
+
+            <div data-role="content" data-position="center">
+
+                <ul id="listaConversas" data-role="listview" data-inset="true" data-filter="true" >
+                
+                </ul>
+
+            </div>
+
+
+            <div data-role="footer"  data-position="fixed">
+
+               
+                <a href="#AdicionarContato" data-icon="plus" data-role="button" id="adicionarContato" > Adicionar contato </a>
+                 
+
+            </div>
+            
+
         </div>
 
-        <div data-role="main" class="ui-content">
-            <p>Click on the button below to open the themed Panel.</p>
-            <a href="#myPanel" class="ui-btn ui-btn-b ui-btn-inline ui-corner-all ui-shadow">Open Panel</a>
+
+         <div id="Configuracoes" data-role="page">
+        
+            <div data-role="header">
+                <a href="#Conversas" data-icon="arrow-l" data-role="button" data-iconpos="notext">Voltar</a>
+                <h1>Configura&ccedil;&otilde;es</h1>
+            </div>
+
+            <div data-role="content" data-position="center">
+
+                <a href="#" data-role="button" id="btnLimparUsuario" > Limpar usu&aacute;rio </a>
+
+                <a href="#" data-role="button" id="btnLimparMensagens" >Limpar mensagens</a>
+
+            </div>
+
+
+         </div>
+
+
+         <div id="AdicionarContato" data-role="page">
+        
+            <div data-role="header">
+               <a href="#Conversas" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>Novo contato</h1>
+            </div>
+
+            <div data-role="content" data-position="center">
+
+                <label for="nome">Nome do contato:</label> 
+                <input type="text" id="nomeContato" name="nomeContato" value="" />
+
+                <a href="#" data-role="button" id="btnProcurarContato" > Procurar </a>
+
+                <ul id="listaProcuraContatos" data-role="listview" data-inset="true" data-filter="true" >
+                
+                </ul>
+
+            </div>
+
+         </div>
+
+
+         <div id="nav-multimidia" data-role="page" data-position="right" data-position-fixed="true" data-display="push" >
+                 <h1>Multim&iacute;dia</h1>
+                 <div class="ui-grid-a">
+	                <div class="ui-block-a"><a href="#viewGaleria" data-role="button" data-icon="galeria" data-iconpos="top"  id="A2">Galeria</a> </div>
+	                <div class="ui-block-b"><a href="#viewFoto" data-role="button" data-icon="camera" data-iconpos="top"   id="A3">Foto</a> </div>
+  	                <div class="ui-block-a"><a href="#viewVideo" data-role="button" data-icon="video" data-iconpos="top"   id="A4">Video</a> </div>
+	                <div class="ui-block-b"><a href="#viewAudio" data-role="button" data-icon="audio" data-iconpos="top"  id="A5">&Aacute;udio</a> </div>
+  	                <div class="ui-block-a"><a href="#viewLocal" data-role="button" data-icon="navigation" data-iconpos="top"  id="A6">Localiza&ccedil;&atilde;o</a> </div>
+	                <div class="ui-block-b"><a href="#viewContato" data-role="button" data-icon="user" data-iconpos="top"   id="A7">Contato</a> </div>
+                </div>
+            </div>
+
+
+        <div id="viewConversa" data-role="page" >
+        
+            <div data-role="header">
+                
+                <h1 id="nomeUsuarioDestino" ></h1>
+                <a href="#Conversas" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <a href="#nav-multimidia" data-icon="multimidia" data-iconpos="notext">Multimidia</a>    
+                    
+            </div>
+
+             
+
+
+            <div data-role="content" data-position="center" data-theme="c">
+
+                <div id="mensagensTrocadas" style="padding-left:4px;padding-right:4px">
+
+
+                </div>
+
+
+            </div>
+
+            <div data-role="footer" data-position="fixed" data-theme="a" style="padding-left:4px;padding-right:4px">
+    	        <table width="100%"><tr> 
+                    <td><input type="text" id="mensagem" value="" /></td>
+                    <td><a href="#" data-role="button" data-icon="arrow-r" data-iconpos="notext" id="enviarMensagem">Enviar</a></td> 
+                </tr></table>
+            </div>
+
         </div>
 
-        <div data-role="footer">
-            <h1>Page Footer</h1>
+        <div id="viewConversaHorizontal" data-role="page" style="width:100%;height:100%;">
+        
+            <div data-role="content" data-position="center" data-theme="c"class="ui-grid-a" style="width:100%;height:100%;">
+                <div class="ui-block-a"><textarea id="textAreaMensagem" style="width:100%;height:100%;"></textarea></div>
+                <div class="ui-block-b"><a href="#viewConvera" data-role="button" data-icon="carat-l" id="enviarMensagemHorizontal">Enviar</a> </div>
+            </div>
+            
+
         </div>
-    </div>
 
 
-    <script type="text/javascript" src="cordova.js"></script>
+        <div id="viewGaleria" data-role="page" >
+        
+            <div data-role="header" >
+                <a href="#viewConversa" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>Galeria</h1>
+            </div>
+
+            <div data-role="content">
+
+                <img style="display:none;width: 100%;" id="imageGaleria" src="" />
+
+                <video style="display:none;" id="enviarVideoGaleria" width="320" height="240" controls>
+                  <source src="" id="videoSourceGaleria"  type="video/mp4">
+                </video>
+
+
+            </div>
+            
+            <div data-role="footer" data-position="fixed" >
+
+                <a href="#viewConversa" data-role="button" id="btnEnviarArquivoGaleria" data-icon="carat-r" >Enviar</a>
+
+            </div>
+
+         </div>
+
+         <div id="viewFoto" data-role="page" >
+        
+            <div data-role="header" >
+                <a href="#viewConversa" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>Foto</h1>
+            </div>
+
+            <div data-role="content" data-position="center" style=" text-align:center" >
+
+                <img id="imgFoto" style="width: 100%;"/>
+
+                <a href="" data-role="button" id="capturaFoto" data-icon="camera" data-position="top" data-inline="true" >Capturar</a>
+
+            </div>
+            
+            <div data-role="footer" data-position="fixed" >
+
+                <a href="#viewConversa" data-role="button" id="btnEnviarFoto" data-icon="carat-r" >Enviar</a>
+
+            </div>
+
+         </div>
+
+        <div id="viewVideo" data-role="page" >
+        
+            <div data-role="header" >
+                <a href="#viewConversa" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>Video</h1>
+            </div>
+
+             <div data-role="content" data-position="center" style=" text-align:center" >
+
+                <video id="enviarVideo" width="320" height="240" controls>
+                  <source src="" id="videoSource"  type="video/mp4">
+                </video>
+                <br />
+                <a href="" data-role="button" id="btnCapturarVideo" data-icon="video" data-position="top" data-inline="true" >Capturar</a>
+
+            </div>
+            
+            <div data-role="footer" data-position="fixed" >
+
+                <a href="#viewConversa" data-role="button" id="btnEnviarVideo" data-icon="carat-r" >Enviar</a>
+
+            </div>
+
+         </div>
+         
+        <div id="viewAudio" data-role="page" >
+        
+            <div data-role="header" >
+                <a href="#viewConversa" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>&Aacute;udio</h1>
+            </div>
+
+            <div data-role="content" data-position="center" style=" text-align:center" >
+
+                <audio id="enviarAudio"  controls>
+                  <source src="" type="audio/3ga">
+                </audio>
+
+                <br />
+                <a href="" data-role="button" id="btnCapturarAudio" data-icon="audio" data-position="top" data-inline="true" >Capturar</a>
+                
+                <a href="" data-role="button" id="btnStopAudio" data-icon="delete" data-position="top" data-inline="true" >Stop</a>
+
+            </div>
+            
+            <div data-role="footer" data-position="fixed" >
+
+                <a href="#viewConversa" data-role="button" id="btnEnviarAudio" data-icon="carat-r" >Enviar</a>
+
+            </div>
+
+         </div>
+
+ 
+        <div id="viewLocal" data-role="page" >
+        
+            <div data-role="header" >
+                <a href="#viewConversa" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>Localiza&ccedil;&atilde;o</h1>
+            </div>
+
+            <div data-role="content" data-position="center"  >
+
+                <label for="latitude">Latitude:</label> 
+                <input type="text" id="latitude" name="latitude" value="" />
+                <label for="longitude">Longitude:</label> 
+                <input type="text" id="longitude" name="longitude" value="" />
+    
+            </div>
+            
+            <div data-role="footer" data-position="fixed" >
+
+                <a href="#viewConversa" data-role="button" id="btnEnviarLocal" data-icon="carat-r" >Enviar</a>
+
+            </div>
+
+         </div>
+
+
+        <div id="viewContato" data-role="page" >
+        
+            <div data-role="header" data-tap-toggle="false">
+                <a href="#viewConversa" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>Contato</h1>
+            </div>
+
+            <div data-role="content" data-position="center" data-tap-toggle="false">
+
+                <ul data-role="listview" data-inset="true" data-filter="true"  id="listContatos">
+                
+                </ul>
+            </div>
+
+             <div data-role="footer" data-position="fixed" data-tap-toggle="false">
+
+                <a href="#viewConversa" data-role="button" id="btnEnviarContatos" data-icon="carat-r" >Enviar</a>
+
+            </div>
+
+        </div>
+
+         <div id="viewPerfil" data-role="page" >
+            
+            <div data-role="header" >
+                <a href="#Conversas" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>Perfil</h1>
+            </div>
+
+            <div data-role="content" data-position="center">
+            
+                 <div class="ui-grid-a">
+	                <div class="ui-block-a"><img style="width:30px;height:30px;" id="imagemPerfil" src="images/user30.png" /><h1>Patricia Maria </h1> </div>
+	                <div class="ui-block-b"><a data-role="button" data-icon="camera" data-iconpos="top" id="capturaFotoPerfil">Foto</a> </div>
+                </div> 
+                
+                <label for="nomePerfil">Nome:</label> 
+                <input type="text" id="nomePerfil" name="nomePerfil" value="" />
+
+                <label for="telefonePerfil">Telefone:</label> 
+                <input type="text" id="telefonePerfil" name="telefonePerfil" value="" />               
+
+            </div>
+
+            <div data-role="footer"  data-position="fixed"  >
+            
+                <a href="#Conversas" data-icon="check" data-role="button" id="btnSalvarPerfil"  > Salvar </a>
+                 
+            </div>
+
+         </div>
+
+          <div id="viewNewContato" data-role="page" >
+            
+            <div data-role="header" >
+                <a href="#viewConversa" data-role="button" data-icon="carat-l" data-iconpos="notext">Voltar</a>
+                <h1>Novo contato</h1>
+            </div>
+
+            <div data-role="content" data-position="center">
+            
+                
+                <label for="nomeNovoContato">Nome:</label> 
+                <input type="text" id="nomeNovoContato" name="nomeNovoContato" value="" />
+
+                <label for="telefoneNovoContato">Telefone:</label> 
+                <input type="text" id="telefoneNovoContato" name="telefoneNovoContato" value="" />               
+
+            </div>
+
+            <div data-role="footer"  data-position="fixed"  >
+            
+                <a href="#viewConversa" data-icon="check" data-role="button" id="btnSalvarNovoContato"  > Salvar </a>
+                 
+            </div>
+
+         </div>
+
+         <div id="Erros" data-role="page">
+        
+            <div data-role="header">
+                <h1>Erros</h1>
+            </div>
+
+            <div data-role="content" data-position="center">
+            
+                <p id="erroDescricao" style="word-wrap: break-word;" >OK</p>
+
+                <a href="#viewConversa" data-icon="carat-l" data-role="button" > Voltar </a>
+
+
+            </div>
+
+        </div>
+
+
+
+        	
+	</body>
+
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript">
         app.initialize();
     </script>
-</body>
+
 </html>
+

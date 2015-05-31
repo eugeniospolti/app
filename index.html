@@ -46,15 +46,21 @@
 
             $.mobile.changePage.defaults.allowSamePageTransition = true;
 
-            
+            document.addEventListener("deviceready", init, false);
 
             function init() {
 
-                getUsuario();
+                try
+                {
+                    getUsuario();
 
-                window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+                    window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
             
-                window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFileSystem, fail);
+                    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFileSystem, fail);
+                }
+                catch (err) {
+                    fail(err);
+                }
 
             }
 
@@ -1678,7 +1684,7 @@
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript">
         app.initialize();
-        document.addEventListener("deviceready", init, false);
+        
     </script>
 
 </html>

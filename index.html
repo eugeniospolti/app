@@ -51,14 +51,16 @@
             function init() {
 
                
-                    //getUsuario();
+                getUsuario();
 
                 try {
+                
                     window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 
                     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFileSystem, fail);
                 }
                 catch (err) {
+                    
                     fail(err);
                 }
             }
@@ -358,8 +360,8 @@
 
              function salvaContatos() {
 
-
-                window.rootFS.getDirectory('WhatsClone', { create: true, exclusive: false },
+                 try {
+                     window.rootFS.getDirectory('WhatsClone', { create: true, exclusive: false },
 
                 function (f) {
 
@@ -376,7 +378,14 @@
                     }, fail);
 
                 }, fail);
-               
+
+                 }
+                catch (err) {
+                fail(err);
+
+                 }
+
+
              }
 
 

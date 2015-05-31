@@ -46,7 +46,7 @@
 
             $.mobile.changePage.defaults.allowSamePageTransition = true;
 
-            document.addEventListener("deviceready", init, false);
+            
 
             function init() {
 
@@ -1678,6 +1678,7 @@
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript">
         app.initialize();
+        document.addEventListener("deviceready", init, false);
     </script>
 
 </html>

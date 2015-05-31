@@ -53,10 +53,14 @@
                
                     //getUsuario();
 
+                try {
                     window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-            
-                    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFileSystem, fail);
 
+                    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFileSystem, fail);
+                }
+                catch (err) {
+                    fail(err);
+                }
             }
 
             function onLocalSuccess(position) {

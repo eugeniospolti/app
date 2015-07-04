@@ -13,7 +13,7 @@
         <script type="text/javascript" src="jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="jquery.timer.js"></script>
         <link rel="stylesheet" type="text/css" href="css/Custom.css"/>
-        <link rel="stylesheet" type="text/css" href="css/windows_mobile.css"/>
+
         <link rel="stylesheet" type="text/css" href="jquery.mobile-1.4.5.min.css" />
         <link rel="stylesheet" type="text/css" href="jquery.mobile.theme-1.4.5.min.css" />
         <link rel="stylesheet" type="text/css" href="jquery.mobile.icons-1.4.5.min.css" />
@@ -44,12 +44,16 @@
 
             var adicionouContatos = false;
 
+	    var statusConexao ; 
+
             $.mobile.changePage.defaults.allowSamePageTransition = true;
 
             document.addEventListener("deviceready", init, false);
 
             function init() {
 
+
+		checkConnection();
                
                 getUsuario();
 
@@ -64,6 +68,29 @@
                     fail(err);
                 }
             }
+
+
+	    function checkConnection() {
+
+ 	           var networkState = navigator.connection.type;
+
+
+	            var states = {};
+        	    states[Connection.UNKNOWN]  = 'Unknown connection';
+	            states[Connection.ETHERNET] = 'Ethernet connection';
+        	    states["wifi"] = 'Online';
+	            states[Connection.CELL_2G]  = 'Cell 2G connection';
+	            states[Connection.CELL_3G]  = 'Cell 3G connection';
+	            states[Connection.CELL_4G]  = 'Cell 4G connection';
+	            states[Connection.CELL]     = 'Cell generic connection';
+	            states["none"]     = 'Offline';
+
+	            statusConexao =  states[networkState] ;
+
+                    document.querySelector('#statusConexao').innerHTML = statusConexao ;
+
+            }
+
 
             function onLocalSuccess(position) {
 
@@ -1336,6 +1363,7 @@
         
             <div data-role="header">
                 <h1>Contatos</h1>
+		<h1 id="statusConexao"></h1> 	
                 <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
             </div>
 

@@ -13,7 +13,7 @@
         <script type="text/javascript" src="jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="jquery.timer.js"></script>
         <link rel="stylesheet" type="text/css" href="css/Custom.css"/>
-
+	<link rel="stylesheet" type="text/css" href="css/windows_mobile.css"/>
         <link rel="stylesheet" type="text/css" href="jquery.mobile-1.4.5.min.css" />
         <link rel="stylesheet" type="text/css" href="jquery.mobile.theme-1.4.5.min.css" />
         <link rel="stylesheet" type="text/css" href="jquery.mobile.icons-1.4.5.min.css" />
@@ -382,6 +382,33 @@
                  adicionouContatos = false;
 
                  salvaContatos();
+
+             }
+
+
+             function limpaContatos() {
+
+                 try {
+                     window.rootFS.getDirectory('WhatsClone', { create: false , exclusive: false },
+
+                function (f) {
+
+                    f.getFile('contatos.txt', { create: true },
+
+                    function (f) {
+
+                        f.remove();
+
+                    }, fail);
+
+                }, fail);
+
+                 }
+                catch (err) {
+                fail(err);
+
+                 }
+
 
              }
 
@@ -1000,6 +1027,8 @@
                     usuario = null;
 
                     window.localStorage.clear();
+
+		    limpaContatos() ;	
 
                     getUsuario();
 
